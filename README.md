@@ -123,16 +123,20 @@ If you grab the wrong one it'll still run via Rosetta, but slower and with worse
 
 ### Step 2 — Grab the files
 
-From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases), download **two files** of the matching architecture:
+From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases), download **two files** of the matching architecture into the same folder:
 
-| You want | File |
-|---|---|
-| The app (Apple Silicon) | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) |
-| The signature (Apple Silicon) | `Seanwiki Silicon-<version>-arm64-mac.zip.sig` (89 B) |
-| The app (Intel) | `Seanwiki Intel-<version>-mac.zip` (~140 MB) |
-| The signature (Intel) | `Seanwiki Intel-<version>-mac.zip.sig` (89 B) |
+| Architecture | Zip (the app) | Signature (verify) |
+|---|---|---|
+| Apple Silicon | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) | `…zip.sig` (89 B) |
+| Intel | `Seanwiki Intel-<version>-mac.zip` (~140 MB) | `…zip.sig` (89 B) |
 
-(If you'd rather have a `.dmg` than a `.zip`, both are provided. Same flow.)
+The signature file is tiny (89 bytes) — make sure to grab it together with the zip so verification works.
+
+Inside the zip you'll find:
+
+- `Seanwiki.app` — the app itself
+- `INSTALL.txt` — bilingual install + Gatekeeper guide (the same content as the sections below)
+- `seanwiki-pubkey.txt` — the public key, for reference
 
 ### Step 3 — Verify before installing
 
@@ -168,21 +172,44 @@ This is the only key I sign with. If a future release verifies against a differe
 
 ### Step 4 — Install
 
+Double-click the zip to extract (or `unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"` in Terminal). You'll get a folder containing `Seanwiki.app`, `INSTALL.txt`, and `seanwiki-pubkey.txt`.
+
+Drag `Seanwiki.app` into `/Applications/`.
+
+### Step 5 — First launch (IMPORTANT — Gatekeeper workaround)
+
+The build is ad-hoc signed today (Developer ID signing will land when distribution scales), so the first launch hits Gatekeeper with this error:
+
+> **"Apple could not verify 'Seanwiki' is free of malware that may harm your Mac or compromise your privacy."**
+
+This is **expected** for an ad-hoc signed app — it's not a real malware warning, just an "I don't know who this developer is" warning. Pick the path that matches your macOS:
+
+**Option A — macOS Sequoia (15.0 and newer)**
+
+The old right-click → Open trick was removed in Sequoia. Use the new flow:
+
+1. Double-click `Seanwiki.app` → see the "could not verify" dialog
+2. Click **Done** (do NOT click "Move to Trash")
+3. Open **System Settings → Privacy & Security**
+4. Scroll down — you'll see: *"Seanwiki was blocked from use because it is not from an identified developer."* Click **Open Anyway**.
+5. Confirm with Touch ID or your password
+6. Done. Future double-clicks work normally.
+
+**Option B — macOS Sonoma (14) or older**
+
+1. Right-click `Seanwiki.app` → **Open**
+2. Dialog appears → click **Open**
+3. Done.
+
+**Option C — Terminal one-liner (works on any macOS)**
+
 ```bash
-unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"
+xattr -cr "/Applications/Seanwiki.app"
 ```
 
-You'll get `Seanwiki.app`. Drag it into `/Applications/`.
+Removes the quarantine flag. Double-click works normally afterward.
 
-### Step 5 — First launch
-
-Gatekeeper will block the first launch because the build is ad-hoc signed (Developer ID signing will land when distribution scales). Workaround:
-
-1. Open Finder → Applications.
-2. **Right-click** Seanwiki.app → **Open**.
-3. Dialog appears saying "Apple cannot verify this developer." Click **Open** anyway.
-
-You only need to do this once. After that double-clicking works normally.
+> The same instructions live inside the zip as `INSTALL.txt` — open it if you forget which path to take.
 
 ### Step 6 — What you see
 

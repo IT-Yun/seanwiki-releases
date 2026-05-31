@@ -123,16 +123,20 @@ Apple 메뉴 → **About This Mac** → "Chip" 항목 확인:
 
 ### 2단계 — 파일 받기
 
-[Releases](https://github.com/IT-Yun/seanwiki-releases/releases) 에서 본인 아키텍처에 맞는 **두 파일**:
+[Releases](https://github.com/IT-Yun/seanwiki-releases/releases) 에서 본인 아키텍처에 맞는 **두 파일** 을 같은 폴더로 다운:
 
-| 원하는 것 | 파일명 |
-|---|---|
-| 앱 본체 (Apple Silicon) | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) |
-| 서명 (Apple Silicon) | `Seanwiki Silicon-<version>-arm64-mac.zip.sig` (89 B) |
-| 앱 본체 (Intel) | `Seanwiki Intel-<version>-mac.zip` (~140 MB) |
-| 서명 (Intel) | `Seanwiki Intel-<version>-mac.zip.sig` (89 B) |
+| 아키텍처 | zip (앱 본체) | sig (검증용) |
+|---|---|---|
+| Apple Silicon | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) | `…zip.sig` (89 B) |
+| Intel | `Seanwiki Intel-<version>-mac.zip` (~140 MB) | `…zip.sig` (89 B) |
 
-(zip 말고 dmg 가 편하면 그것도 같이 올라가 있어. 흐름은 동일.)
+`.sig` 파일은 89바이트밖에 안 되니까 zip 이랑 같이 받아둬야 검증이 돼.
+
+zip 풀면 안에 이렇게 들어있어:
+
+- `Seanwiki.app` — 앱 본체
+- `INSTALL.txt` — 이중언어 설치/Gatekeeper 안내 (아래 섹션이랑 동일 내용)
+- `seanwiki-pubkey.txt` — 공개키 (참고용)
 
 ### 3단계 — 설치 전 검증
 
@@ -168,21 +172,44 @@ nzi9RYywbRu//kXHVt8aNI0w5U2i2g/YZI0u65QsNc8=
 
 ### 4단계 — 설치
 
+zip 더블클릭으로 압축 풀기 (또는 터미널에서 `unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"`). 폴더 안에 `Seanwiki.app` + `INSTALL.txt` + `seanwiki-pubkey.txt` 가 있어.
+
+`Seanwiki.app` 을 `/Applications/` 로 드래그.
+
+### 5단계 — 첫 실행 (중요 — Gatekeeper 우회)
+
+현재는 ad-hoc 서명이라 (Developer ID 서명은 배포 규모 커지면 도입) 첫 실행 시 Gatekeeper 가 이런 에러로 막아:
+
+> **"Apple could not verify 'Seanwiki' is free of malware that may harm your Mac or compromise your privacy."**
+
+ad-hoc 서명 앱이라 **정상**이야. 진짜 악성코드 경고가 아니라 "이 개발자가 누군지 모르겠다" 경고. macOS 버전에 맞춰 셋 중 하나:
+
+**옵션 A — macOS Sequoia (15.0 이상)**
+
+Sequoia 부터 옛날 우클릭 → 열기 트릭이 사라졌어. 새 절차:
+
+1. `Seanwiki.app` 더블클릭 → "확인할 수 없음" 다이얼로그
+2. **완료** 클릭 (절대 "휴지통으로 이동" X)
+3. **시스템 설정 → 개인정보 보호 및 보안** 열기
+4. 스크롤 내리면: *"Seanwiki 은(는) 확인된 개발자의 것이 아니므로 차단되었습니다"* → 옆에 **확인 없이 열기** 클릭
+5. Touch ID 또는 비밀번호 확인
+6. 끝. 이후엔 더블클릭만으로 평범하게 열림.
+
+**옵션 B — macOS Sonoma (14) 이하**
+
+1. `Seanwiki.app` 우클릭 → **열기**
+2. 다이얼로그 → **열기**
+3. 끝.
+
+**옵션 C — 터미널 한 줄 (모든 macOS 공통)**
+
 ```bash
-unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"
+xattr -cr "/Applications/Seanwiki.app"
 ```
 
-`Seanwiki.app` 이 나와. `/Applications/` 로 드래그.
+quarantine 플래그 제거 → 더블클릭으로 바로 열림.
 
-### 5단계 — 첫 실행
-
-현재는 ad-hoc 서명이라 Gatekeeper 가 첫 실행을 막아 (Developer ID 서명은 배포 규모 커지면 도입). 우회:
-
-1. Finder → 응용프로그램
-2. Seanwiki.app **우클릭** → **열기**
-3. "Apple 이 이 개발자를 확인할 수 없습니다" 다이얼로그 → **그래도 열기**
-
-이건 처음 한 번만. 그 이후엔 더블클릭으로 평범하게 열려.
+> 같은 안내가 zip 안 `INSTALL.txt` 에 들어있어 — 어느 절차였는지 까먹으면 그거 보면 됨.
 
 ### 6단계 — 처음 보이는 화면
 
