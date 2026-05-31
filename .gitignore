@@ -1,0 +1,9 @@
+# Release artifacts are uploaded as GitHub Release attachments, never committed.
+*.zip
+*.dmg
+*.blockmap
+*.sig
+
+# OS
+.DS_Store
+Thumbs.db
