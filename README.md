@@ -123,36 +123,70 @@ If you grab the wrong one it'll still run via Rosetta, but slower and with worse
 
 ### Step 2 — Grab the files
 
-From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases), download **two files** of the matching architecture into the same folder:
+Latest version: **v2.0.0**. From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest), download the files for your architecture into the same folder.
 
-| Architecture | Zip (the app) | Signature (verify) |
-|---|---|---|
-| Apple Silicon | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) | `…zip.sig` (89 B) |
-| Intel | `Seanwiki Intel-<version>-mac.zip` (~140 MB) | `…zip.sig` (89 B) |
+Each architecture ships **two formats** — grab whichever you prefer (they're the same app):
 
-The signature file is tiny (89 bytes) — make sure to grab it together with the zip so verification works.
+- **`.dmg`** — the classic "open it, drag the app into Applications" installer. Easiest if you just want it running.
+- **`.zip`** — the same app, zipped up. Use this one if you want to run the verify script below first.
 
-Inside the zip you'll find:
+| Architecture | `.dmg` (drag-install) | `.zip` (verify-first) | Signature |
+|---|---|---|---|
+| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.0-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.0-arm64-mac.zip` (~135 MB) | matching `…​.sig` (89 B) |
+| **Intel** | `Seanwiki.Intel-2.0.0.dmg` (~140 MB) | `Seanwiki.Intel-2.0.0-mac.zip` (~140 MB) | matching `…​.sig` (89 B) |
 
-- `Seanwiki.app` — the app itself
-- `INSTALL.txt` — bilingual install + Gatekeeper guide (the same content as the sections below)
-- `seanwiki-pubkey.txt` — the public key, for reference
+The signature file is tiny (89 bytes) — grab it together with the binary so verification works.
+
+Inside the zip (or the mounted `.dmg`) is a single app, named per architecture:
+
+- Apple Silicon → **`Seanwiki Silicon.app`**
+- Intel → **`Seanwiki Intel.app`**
+
+(The chip is baked into the name on purpose — so if you ever have both on one machine you can tell them apart. Everywhere below, "the Seanwiki app" means whichever of those two you downloaded.)
+
+#### Or download straight from the Terminal (one block, no browser)
+
+If you'd rather not click around, paste this. It auto-detects your chip, downloads the matching `.zip` + `.sig`, and verifies the signature in one go:
+
+```bash
+# 1) pick the right file for your Mac's chip
+#    (hw.optional.arm64 == 1 means Apple Silicon — correct even inside a Rosetta shell)
+if [ "$(sysctl -in hw.optional.arm64 2>/dev/null)" = "1" ]; then
+  FILE="Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+else
+  FILE="Seanwiki.Intel-2.0.0-mac.zip"
+fi
+BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.0"
+
+# 2) download the app + its signature into the current folder
+curl -L -o "$FILE"     "$BASE/$FILE"
+curl -L -o "$FILE.sig" "$BASE/$FILE.sig"
+
+echo "Downloaded $FILE  ($(du -h "$FILE" | cut -f1))"
+```
+
+(Have the GitHub CLI? `gh release download v2.0.0 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` grabs every asset — pick the arch you want, or pass `-p "*Silicon*"` / `-p "*Intel*"` to narrow it.)
+
+Then verify it (Step 3), unzip, and drag the app into `/Applications/`.
 
 ### Step 3 — Verify before installing
 
-This step takes ten seconds and protects you from a tampered binary. Clone this repo or download the two files in `scripts/`, then:
+This step takes ten seconds and protects you from a tampered binary. Clone this repo (or just download the two files in `scripts/`), then point the script at the file you downloaded:
 
 ```bash
-cd <wherever-you-downloaded-the-zip>
-bash <path-to>/scripts/verify-release.sh "Seanwiki Silicon-0.1.1-arm64-mac.zip"
+cd <wherever-you-downloaded-the-file>
+# Apple Silicon:
+bash <path-to>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+# Intel:
+bash <path-to>/scripts/verify-release.sh "Seanwiki.Intel-2.0.0-mac.zip"
 ```
 
-You should see:
+The script auto-finds the matching `.sig` (it must sit in the same folder). You should see:
 
 ```
-→ Verifying: Seanwiki Silicon-0.1.1-arm64-mac.zip
+→ Verifying: Seanwiki.Silicon-2.0.0-arm64-mac.zip
 
-  computed SHA-256: ac1a6a17e34b8c460f7de709ffd62bf64da45605104aa58797288299d11612b1
+  computed SHA-256: 8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb
 
 → Verifying ed25519 signature against published public key
   ✓ ed25519 signature VERIFIED
@@ -161,6 +195,17 @@ You should see:
 ```
 
 **If the signature does NOT verify, delete the file and re-download.** Don't install it. Either the file is corrupted in transit, or someone tampered with it. Neither is your problem to fix — just grab a fresh copy.
+
+#### Published SHA-256 (v2.0.0)
+
+If you'd rather eyeball the hash yourself, run `shasum -a 256 <file>` and compare against this table:
+
+| File | SHA-256 |
+|---|---|
+| `Seanwiki.Silicon-2.0.0-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
+| `Seanwiki.Silicon-2.0.0-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
+| `Seanwiki.Intel-2.0.0-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
+| `Seanwiki.Intel-2.0.0.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
 
 The public key (`scripts/seanwiki-pubkey.txt`) is:
 
@@ -172,44 +217,53 @@ This is the only key I sign with. If a future release verifies against a differe
 
 ### Step 4 — Install
 
-Double-click the zip to extract (or `unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"` in Terminal). You'll get a folder containing `Seanwiki.app`, `INSTALL.txt`, and `seanwiki-pubkey.txt`.
+**From the `.dmg`:** double-click it → a window opens showing the app and an `Applications` shortcut → drag the app onto `Applications`. Done. Eject the disk image afterward.
 
-Drag `Seanwiki.app` into `/Applications/`.
+**From the `.zip`:** double-click it to extract (or `unzip "Seanwiki.Silicon-2.0.0-arm64-mac.zip"` in Terminal) → you get the app → drag it into `/Applications/`.
+
+Either way the app you're dragging is `Seanwiki Silicon.app` (Apple Silicon) or `Seanwiki Intel.app` (Intel).
 
 ### Step 5 — First launch (IMPORTANT — Gatekeeper workaround)
 
 The build is ad-hoc signed today (Developer ID signing will land when distribution scales), so the first launch hits Gatekeeper with this error:
 
-> **"Apple could not verify 'Seanwiki' is free of malware that may harm your Mac or compromise your privacy."**
+> **"Apple could not verify 'Seanwiki Silicon' is free of malware that may harm your Mac or compromise your privacy."**
 
-This is **expected** for an ad-hoc signed app — it's not a real malware warning, just an "I don't know who this developer is" warning. Pick the path that matches your macOS:
+(On an Intel Mac it says "Seanwiki Intel" instead.) This is **expected** for an ad-hoc signed app — it's not a real malware warning, just an "I don't know who this developer is" warning. Pick the path that matches your macOS:
 
-**Option A — macOS Sequoia (15.0 and newer)**
+**Option A — macOS Sequoia (15.0 and newer) — the Privacy & Security unlock**
 
 The old right-click → Open trick was removed in Sequoia. Use the new flow:
 
-1. Double-click `Seanwiki.app` → see the "could not verify" dialog
-2. Click **Done** (do NOT click "Move to Trash")
-3. Open **System Settings → Privacy & Security**
-4. Scroll down — you'll see: *"Seanwiki was blocked from use because it is not from an identified developer."* Click **Open Anyway**.
-5. Confirm with Touch ID or your password
-6. Done. Future double-clicks work normally.
+1. Double-click the app → see the "could not verify" dialog
+2. Click **Done** (do **NOT** click "Move to Trash" — that deletes the app)
+3. Open  → **System Settings** → **Privacy & Security**
+4. Scroll all the way down to the **Security** section. You'll see a line like: *"Seanwiki Silicon was blocked from use because it is not from an identified developer."* with an **Open Anyway** button next to it. Click **Open Anyway**.
+5. A confirmation dialog appears → click **Open Anyway** again → authenticate with Touch ID or your login password.
+6. The app launches. Every future double-click opens it normally — you only do this once.
+
+> If you don't see the "Open Anyway" button, you skipped step 1 — macOS only shows it right after you've *tried* to open the app and been blocked. Double-click the app once, click Done, then go back to Privacy & Security.
 
 **Option B — macOS Sonoma (14) or older**
 
-1. Right-click `Seanwiki.app` → **Open**
+1. Right-click (or Control-click) the app → **Open**
 2. Dialog appears → click **Open**
-3. Done.
+3. Done. (Future double-clicks work normally.)
 
-**Option C — Terminal one-liner (works on any macOS)**
+**Option C — Terminal one-liner (works on any macOS, fastest)**
+
+Strip Apple's quarantine flag directly. This is the same thing Privacy & Security does, just from the command line:
 
 ```bash
-xattr -cr "/Applications/Seanwiki.app"
+# Apple Silicon:
+xattr -dr com.apple.quarantine "/Applications/Seanwiki Silicon.app"
+# Intel:
+xattr -dr com.apple.quarantine "/Applications/Seanwiki Intel.app"
 ```
 
-Removes the quarantine flag. Double-click works normally afterward.
+Then just double-click the app — no dialog at all. (`xattr -cr "<path>"` also works; it clears *all* extended attributes instead of just the quarantine one.)
 
-> The same instructions live inside the zip as `INSTALL.txt` — open it if you forget which path to take.
+> **Why does this happen at all?** macOS tags every file downloaded from the internet with a `com.apple.quarantine` flag. For apps signed with a paid Apple Developer ID, Gatekeeper checks the signature and lets it through. This build is *ad-hoc* signed (no paid cert yet), so Gatekeeper can't identify the developer and blocks it — until you explicitly approve it once via any of the three options above. None of this means the app is unsafe; it means Apple hasn't been paid to vouch for it. That's exactly why every release is independently signed with my own ed25519 key (Step 3) — so you can verify it's really from me without trusting Apple's chain at all.
 
 ### Step 6 — What you see
 

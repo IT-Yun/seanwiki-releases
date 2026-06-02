@@ -123,36 +123,70 @@ Apple 메뉴 → **About This Mac** → "Chip" 항목 확인:
 
 ### 2단계 — 파일 받기
 
-[Releases](https://github.com/IT-Yun/seanwiki-releases/releases) 에서 본인 아키텍처에 맞는 **두 파일** 을 같은 폴더로 다운:
+최신 버전: **v2.0.0**. [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest) 에서 본인 아키텍처에 맞는 파일을 같은 폴더로 받아.
 
-| 아키텍처 | zip (앱 본체) | sig (검증용) |
-|---|---|---|
-| Apple Silicon | `Seanwiki Silicon-<version>-arm64-mac.zip` (~135 MB) | `…zip.sig` (89 B) |
-| Intel | `Seanwiki Intel-<version>-mac.zip` (~140 MB) | `…zip.sig` (89 B) |
+아키텍처마다 **두 가지 포맷** 이 올라가 있어 — 편한 걸로 받으면 돼 (둘 다 동일한 앱):
 
-`.sig` 파일은 89바이트밖에 안 되니까 zip 이랑 같이 받아둬야 검증이 돼.
+- **`.dmg`** — "더블클릭 → 앱을 Applications 로 드래그" 하는 전통적인 설치 이미지. 그냥 바로 실행하고 싶으면 이거.
+- **`.zip`** — 같은 앱을 zip 으로 압축한 것. 아래 검증 스크립트를 먼저 돌려보고 싶으면 이거.
 
-zip 풀면 안에 이렇게 들어있어:
+| 아키텍처 | `.dmg` (드래그 설치) | `.zip` (검증 후 설치) | 서명 |
+|---|---|---|---|
+| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.0-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.0-arm64-mac.zip` (~135 MB) | 짝이 되는 `…​.sig` (89 B) |
+| **Intel** | `Seanwiki.Intel-2.0.0.dmg` (~140 MB) | `Seanwiki.Intel-2.0.0-mac.zip` (~140 MB) | 짝이 되는 `…​.sig` (89 B) |
 
-- `Seanwiki.app` — 앱 본체
-- `INSTALL.txt` — 이중언어 설치/Gatekeeper 안내 (아래 섹션이랑 동일 내용)
-- `seanwiki-pubkey.txt` — 공개키 (참고용)
+`.sig` 파일은 89바이트밖에 안 되니까 본체 파일이랑 **같은 폴더에** 같이 받아둬야 검증이 돼.
+
+zip(또는 마운트한 `.dmg`) 안엔 앱 하나가 들어있고, 이름은 아키텍처별로 달라:
+
+- Apple Silicon → **`Seanwiki Silicon.app`**
+- Intel → **`Seanwiki Intel.app`**
+
+(칩 이름을 일부러 파일명에 박아둠 — 한 맥에 둘 다 있어도 구분되게. 아래에서 "Seanwiki 앱" 은 네가 받은 둘 중 하나를 뜻해.)
+
+#### 또는 터미널에서 바로 받기 (브라우저 없이 한 블록)
+
+클릭하기 귀찮으면 이거 붙여넣어. 칩을 자동 감지해서 맞는 `.zip` + `.sig` 를 현재 폴더로 받아:
+
+```bash
+# 1) 본인 Mac 칩에 맞는 파일 자동 선택
+#    (hw.optional.arm64 == 1 이면 Apple Silicon — Rosetta 셸 안에서도 정확함)
+if [ "$(sysctl -in hw.optional.arm64 2>/dev/null)" = "1" ]; then
+  FILE="Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+else
+  FILE="Seanwiki.Intel-2.0.0-mac.zip"
+fi
+BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.0"
+
+# 2) 앱 + 서명파일을 현재 폴더로 다운로드
+curl -L -o "$FILE"     "$BASE/$FILE"
+curl -L -o "$FILE.sig" "$BASE/$FILE.sig"
+
+echo "받음: $FILE  ($(du -h "$FILE" | cut -f1))"
+```
+
+(GitHub CLI 있으면 한 방에: `gh release download v2.0.0 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` — 원하는 아키텍처만 받으려면 `-p "*Silicon*"` 또는 `-p "*Intel*"`)
+
+받은 다음 검증(3단계) → 압축 풀기 → 앱을 `/Applications/` 로 드래그.
 
 ### 3단계 — 설치 전 검증
 
-10초짜리 단계. 변조된 바이너리로부터 너를 보호하는 마지막 방어선. 이 레포 clone 하거나 `scripts/` 안 두 파일만 다운받은 후:
+10초짜리 단계. 변조된 바이너리로부터 너를 보호하는 마지막 방어선. 이 레포 clone 하거나 `scripts/` 안 두 파일만 받은 후, 받은 파일을 스크립트에 넘겨:
 
 ```bash
-cd <zip-받은-폴더>
-bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki Silicon-0.1.1-arm64-mac.zip"
+cd <파일-받은-폴더>
+# Apple Silicon:
+bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+# Intel:
+bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Intel-2.0.0-mac.zip"
 ```
 
-성공 시 출력:
+스크립트가 같은 폴더의 짝 `.sig` 를 자동으로 찾아. 성공 시 출력:
 
 ```
-→ Verifying: Seanwiki Silicon-0.1.1-arm64-mac.zip
+→ Verifying: Seanwiki.Silicon-2.0.0-arm64-mac.zip
 
-  computed SHA-256: ac1a6a17e34b8c460f7de709ffd62bf64da45605104aa58797288299d11612b1
+  computed SHA-256: 8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb
 
 → Verifying ed25519 signature against published public key
   ✓ ed25519 signature VERIFIED
@@ -161,6 +195,17 @@ bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki Silicon-0.
 ```
 
 **서명 검증이 실패하면 파일 지우고 다시 받아.** 설치하지 마. 전송 중 손상되었거나 누가 변조한 것 — 둘 다 너의 책임이 아니야. 그냥 다시 받으면 돼.
+
+#### 공개 SHA-256 (v2.0.0)
+
+스크립트 없이 직접 해시만 비교하고 싶으면 `shasum -a 256 <파일>` 돌려서 아래랑 대조:
+
+| 파일 | SHA-256 |
+|---|---|
+| `Seanwiki.Silicon-2.0.0-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
+| `Seanwiki.Silicon-2.0.0-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
+| `Seanwiki.Intel-2.0.0-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
+| `Seanwiki.Intel-2.0.0.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
 
 공개키 (`scripts/seanwiki-pubkey.txt`):
 
@@ -172,44 +217,53 @@ nzi9RYywbRu//kXHVt8aNI0w5U2i2g/YZI0u65QsNc8=
 
 ### 4단계 — 설치
 
-zip 더블클릭으로 압축 풀기 (또는 터미널에서 `unzip "Seanwiki Silicon-0.1.1-arm64-mac.zip"`). 폴더 안에 `Seanwiki.app` + `INSTALL.txt` + `seanwiki-pubkey.txt` 가 있어.
+**`.dmg` 로 설치:** 더블클릭 → 창이 열리면서 앱과 `Applications` 바로가기가 보여 → 앱을 `Applications` 위로 드래그. 끝. 끝나면 디스크 이미지는 추출(eject) 해.
 
-`Seanwiki.app` 을 `/Applications/` 로 드래그.
+**`.zip` 으로 설치:** 더블클릭으로 압축 풀기 (또는 터미널에서 `unzip "Seanwiki.Silicon-2.0.0-arm64-mac.zip"`) → 앱이 나와 → `/Applications/` 로 드래그.
 
-### 5단계 — 첫 실행 (중요 — Gatekeeper 우회)
+어느 쪽이든 드래그하는 앱은 `Seanwiki Silicon.app` (Apple Silicon) 또는 `Seanwiki Intel.app` (Intel) 이야.
+
+### 5단계 — 첫 실행 (중요 — Gatekeeper 우회 / 개인정보 보호에서 풀기)
 
 현재는 ad-hoc 서명이라 (Developer ID 서명은 배포 규모 커지면 도입) 첫 실행 시 Gatekeeper 가 이런 에러로 막아:
 
-> **"Apple could not verify 'Seanwiki' is free of malware that may harm your Mac or compromise your privacy."**
+> **"Apple이(가) 'Seanwiki Silicon'에 Mac에 손상을 입히거나 사용자의 개인정보를 침해할 수 있는 악성 소프트웨어가 없음을 확인할 수 없습니다."**
 
-ad-hoc 서명 앱이라 **정상**이야. 진짜 악성코드 경고가 아니라 "이 개발자가 누군지 모르겠다" 경고. macOS 버전에 맞춰 셋 중 하나:
+(Intel 맥이면 "Seanwiki Intel" 로 나옴.) ad-hoc 서명 앱이라 **정상**이야. 진짜 악성코드 경고가 아니라 "이 개발자가 누군지 모르겠다" 경고. macOS 버전에 맞춰 셋 중 하나:
 
-**옵션 A — macOS Sequoia (15.0 이상)**
+**옵션 A — macOS Sequoia (15.0 이상) — 개인정보 보호 및 보안에서 풀기**
 
 Sequoia 부터 옛날 우클릭 → 열기 트릭이 사라졌어. 새 절차:
 
-1. `Seanwiki.app` 더블클릭 → "확인할 수 없음" 다이얼로그
-2. **완료** 클릭 (절대 "휴지통으로 이동" X)
-3. **시스템 설정 → 개인정보 보호 및 보안** 열기
-4. 스크롤 내리면: *"Seanwiki 은(는) 확인된 개발자의 것이 아니므로 차단되었습니다"* → 옆에 **확인 없이 열기** 클릭
-5. Touch ID 또는 비밀번호 확인
-6. 끝. 이후엔 더블클릭만으로 평범하게 열림.
+1. 앱 더블클릭 → "확인할 수 없음" 다이얼로그
+2. **완료** 클릭 (절대 **"휴지통으로 이동" 누르지 마** — 앱이 삭제됨)
+3.  → **시스템 설정** → **개인정보 보호 및 보안** 열기
+4. **맨 아래까지 스크롤** 해서 **보안** 섹션을 봐. *"Seanwiki Silicon은(는) 확인된 개발자의 것이 아니므로 차단되었습니다"* 같은 문구 옆에 **확인 없이 열기** 버튼이 있어. 그거 클릭.
+5. 확인 다이얼로그가 또 뜸 → **확인 없이 열기** 한 번 더 → Touch ID 또는 로그인 비밀번호로 인증.
+6. 앱이 실행돼. 이후 모든 더블클릭은 평범하게 열림 — 이 과정은 딱 한 번만.
+
+> **확인 없이 열기** 버튼이 안 보이면 1번을 건너뛴 거야 — macOS 는 앱을 *한 번 열려고 시도해서 차단된 직후에만* 이 버튼을 보여줘. 앱을 한 번 더블클릭하고 완료 누른 다음, 다시 개인정보 보호 및 보안으로 가.
 
 **옵션 B — macOS Sonoma (14) 이하**
 
-1. `Seanwiki.app` 우클릭 → **열기**
+1. 앱 우클릭 (또는 Control+클릭) → **열기**
 2. 다이얼로그 → **열기**
-3. 끝.
+3. 끝. (이후 더블클릭은 평범하게 열림.)
 
-**옵션 C — 터미널 한 줄 (모든 macOS 공통)**
+**옵션 C — 터미널 한 줄 (모든 macOS 공통, 제일 빠름)**
+
+Apple 의 quarantine 플래그를 직접 제거. 개인정보 보호 및 보안에서 하는 거랑 똑같은 동작을 커맨드라인에서 하는 것:
 
 ```bash
-xattr -cr "/Applications/Seanwiki.app"
+# Apple Silicon:
+xattr -dr com.apple.quarantine "/Applications/Seanwiki Silicon.app"
+# Intel:
+xattr -dr com.apple.quarantine "/Applications/Seanwiki Intel.app"
 ```
 
-quarantine 플래그 제거 → 더블클릭으로 바로 열림.
+그 다음 앱 더블클릭 → 다이얼로그 없이 바로 열림. (`xattr -cr "<경로>"` 도 동작 — 다만 quarantine 만이 아니라 *모든* 확장 속성을 지워.)
 
-> 같은 안내가 zip 안 `INSTALL.txt` 에 들어있어 — 어느 절차였는지 까먹으면 그거 보면 됨.
+> **왜 이런 게 뜨냐면?** macOS 는 인터넷에서 받은 모든 파일에 `com.apple.quarantine` 플래그를 붙여. 유료 Apple Developer ID 로 서명된 앱이면 Gatekeeper 가 서명을 확인하고 통과시켜. 이 빌드는 *ad-hoc* 서명이라 (아직 유료 인증서 없음) Gatekeeper 가 개발자를 식별 못 해서 막는 거고 — 위 세 방법 중 하나로 네가 한 번 명시적으로 허용해주면 풀려. 앱이 위험하다는 뜻이 전혀 아니야. Apple 이 보증해줄 돈을 안 냈다는 뜻이지. 그래서 릴리즈마다 내 ed25519 키로 따로 서명하는 거야 (3단계) — Apple 의 체인을 신뢰하지 않고도 이게 진짜 내가 만든 건지 네가 직접 검증할 수 있게.
 
 ### 6단계 — 처음 보이는 화면
 
