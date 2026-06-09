@@ -23,6 +23,12 @@ Obsidian과 Claude Code를 하나의 vault로 연결하는 macOS 앱입니다.
   <img alt="Obsidian" src="https://img.shields.io/badge/Obsidian-7C3AED?logo=obsidian&logoColor=white">
 </p>
 
+<br>
+
+<img alt="Seanwiki 스크린샷" src="docs/screenshot.png" width="820">
+
+<br><br>
+
 [English](README.md) · **한국어**
 
 </div>

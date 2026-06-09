@@ -23,6 +23,12 @@ reads from, and writes back into, the same knowledge base you already trust.
   <img alt="Obsidian" src="https://img.shields.io/badge/Obsidian-7C3AED?logo=obsidian&logoColor=white">
 </p>
 
+<br>
+
+<img alt="Seanwiki screenshot" src="docs/screenshot.png" width="820">
+
+<br><br>
+
 **English** · [한국어](README.ko.md)
 
 </div>
