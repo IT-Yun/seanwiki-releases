@@ -1,12 +1,35 @@
-**English** · [한국어](README.ko.md)
+<div align="center">
 
 # Seanwiki
 
-> Obsidian + Claude, fused into your personal knowledge encyclopedia.
+**Obsidian + Claude Code, fused into your personal knowledge encyclopedia.**
 
-A macOS app that ties Obsidian and Claude Code into a single vault — so the AI you talk to is reading from, and writing back into, the same knowledge base you already trust.
+A macOS app that ties Obsidian and Claude Code into a single vault — so the AI you talk to
+reads from, and writes back into, the same knowledge base you already trust.
 
-This is the **release-only** repo. The source lives privately for now. This repo exists so you can download signed binaries, verify them, read the philosophy behind the tool, and decide whether it's for you.
+<p>
+  <a href="https://github.com/IT-Yun/seanwiki-releases/releases/latest"><img alt="Latest release" src="https://img.shields.io/github/v/release/IT-Yun/seanwiki-releases?logo=github&label=release&color=2C2E3B"></a>
+  <a href="LICENSE"><img alt="License: MIT" src="https://img.shields.io/github/license/IT-Yun/seanwiki-releases?color=blue"></a>
+  <img alt="Platform: macOS" src="https://img.shields.io/badge/platform-macOS-000000?logo=apple&logoColor=white">
+  <a href="https://github.com/IT-Yun/seanwiki-releases/releases"><img alt="Downloads" src="https://img.shields.io/github/downloads/IT-Yun/seanwiki-releases/total?logo=github&color=success"></a>
+  <a href="https://github.com/IT-Yun/seanwiki-releases/stargazers"><img alt="Stars" src="https://img.shields.io/github/stars/IT-Yun/seanwiki-releases?style=social"></a>
+</p>
+
+<p>
+  <img alt="Electron" src="https://img.shields.io/badge/Electron-2C2E3B?logo=electron&logoColor=9FEAF9">
+  <img alt="React" src="https://img.shields.io/badge/React-20232A?logo=react&logoColor=61DAFB">
+  <img alt="TypeScript" src="https://img.shields.io/badge/TypeScript-3178C6?logo=typescript&logoColor=white">
+  <img alt="Claude" src="https://img.shields.io/badge/Claude_Code-D97757?logo=anthropic&logoColor=white">
+  <img alt="Obsidian" src="https://img.shields.io/badge/Obsidian-7C3AED?logo=obsidian&logoColor=white">
+</p>
+
+**English** · [한국어](README.ko.md)
+
+</div>
+
+> This is the **release-only** repo — the source lives privately for now. Here you can download
+> signed binaries, verify them, read the philosophy behind the tool, and decide if it's for you.
+> If it sounds useful, a ⭐ on this repo helps other people find it.
 
 ---
 
