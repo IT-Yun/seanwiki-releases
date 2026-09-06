@@ -123,7 +123,7 @@ Apple 메뉴 → **이 Mac에 관하여** → "칩" 항목을 확인합니다.
 
 ### 2단계 — 파일 받기
 
-최신 버전은 **v2.0.0**입니다. [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest)에서 내 아키텍처에 맞는 파일을 같은 폴더로 받습니다.
+최신 버전은 **v2.0.1**입니다. [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest)에서 내 아키텍처에 맞는 파일을 같은 폴더로 받습니다.
 
 아키텍처마다 **두 가지 포맷**이 있습니다. 둘은 완전히 같은 앱이니 편한 쪽으로 받으면 됩니다.
 
@@ -132,8 +132,8 @@ Apple 메뉴 → **이 Mac에 관하여** → "칩" 항목을 확인합니다.
 
 | 아키텍처 | `.dmg` (드래그 설치) | `.zip` (검증 후 설치) | 서명 |
 |---|---|---|---|
-| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.0-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.0-arm64-mac.zip` (~135 MB) | 짝이 되는 `…​.sig` (89 B) |
-| **Intel** | `Seanwiki.Intel-2.0.0.dmg` (~140 MB) | `Seanwiki.Intel-2.0.0-mac.zip` (~140 MB) | 짝이 되는 `…​.sig` (89 B) |
+| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.1-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.1-arm64-mac.zip` (~135 MB) | 짝이 되는 `…​.sig` (89 B) |
+| **Intel** | `Seanwiki.Intel-2.0.1.dmg` (~140 MB) | `Seanwiki.Intel-2.0.1-mac.zip` (~140 MB) | 짝이 되는 `…​.sig` (89 B) |
 
 `.sig` 파일은 89바이트밖에 안 되니, 본체와 **같은 폴더에** 함께 받아야 검증이 됩니다.
 
@@ -152,11 +152,11 @@ zip(또는 마운트한 `.dmg`) 안에는 앱 하나가 들어 있고, 이름은
 # 1) 내 Mac 칩에 맞는 파일 자동 선택
 #    (hw.optional.arm64 == 1 이면 Apple Silicon — Rosetta 셸 안에서도 정확함)
 if [ "$(sysctl -in hw.optional.arm64 2>/dev/null)" = "1" ]; then
-  FILE="Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+  FILE="Seanwiki.Silicon-2.0.1-arm64-mac.zip"
 else
-  FILE="Seanwiki.Intel-2.0.0-mac.zip"
+  FILE="Seanwiki.Intel-2.0.1-mac.zip"
 fi
-BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.0"
+BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.1"
 
 # 2) 앱 + 서명 파일을 현재 폴더로 다운로드
 curl -L -o "$FILE"     "$BASE/$FILE"
@@ -165,7 +165,7 @@ curl -L -o "$FILE.sig" "$BASE/$FILE.sig"
 echo "받음: $FILE  ($(du -h "$FILE" | cut -f1))"
 ```
 
-(GitHub CLI가 있다면 한 번에: `gh release download v2.0.0 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` — 특정 아키텍처만 받으려면 `-p "*Silicon*"` 또는 `-p "*Intel*"`)
+(GitHub CLI가 있다면 한 번에: `gh release download v2.0.1 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` — 특정 아키텍처만 받으려면 `-p "*Silicon*"` 또는 `-p "*Intel*"`)
 
 받은 뒤에는 검증(3단계) → 압축 풀기 → 앱을 `/Applications/`로 드래그합니다.
 
@@ -176,15 +176,15 @@ echo "받음: $FILE  ($(du -h "$FILE" | cut -f1))"
 ```bash
 cd <파일-받은-폴더>
 # Apple Silicon:
-bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.1-arm64-mac.zip"
 # Intel:
-bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Intel-2.0.0-mac.zip"
+bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Intel-2.0.1-mac.zip"
 ```
 
 스크립트는 같은 폴더의 짝 `.sig`를 자동으로 찾습니다. 성공하면 다음과 같이 출력됩니다.
 
 ```
-→ Verifying: Seanwiki.Silicon-2.0.0-arm64-mac.zip
+→ Verifying: Seanwiki.Silicon-2.0.1-arm64-mac.zip
 
   computed SHA-256: 8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb
 
@@ -196,16 +196,16 @@ bash <verify-스크립트-경로>/scripts/verify-release.sh "Seanwiki.Intel-2.0.
 
 **검증에 실패하면 파일을 지우고 다시 받으세요. 설치하면 안 됩니다.** 전송 중 손상되었거나 누군가 변조한 것이며, 둘 다 새로 받으면 해결됩니다.
 
-#### 공개 SHA-256 (v2.0.0)
+#### 공개 SHA-256 (v2.0.1)
 
 스크립트 없이 해시만 직접 비교하려면 `shasum -a 256 <파일>`을 실행해 아래와 대조하세요.
 
 | 파일 | SHA-256 |
 |---|---|
-| `Seanwiki.Silicon-2.0.0-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
-| `Seanwiki.Silicon-2.0.0-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
-| `Seanwiki.Intel-2.0.0-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
-| `Seanwiki.Intel-2.0.0.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
+| `Seanwiki.Silicon-2.0.1-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
+| `Seanwiki.Silicon-2.0.1-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
+| `Seanwiki.Intel-2.0.1-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
+| `Seanwiki.Intel-2.0.1.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
 
 공개키 (`scripts/seanwiki-pubkey.txt`):
 
@@ -219,7 +219,7 @@ nzi9RYywbRu//kXHVt8aNI0w5U2i2g/YZI0u65QsNc8=
 
 **`.dmg`로 설치:** 더블클릭하면 앱과 `Applications` 바로가기가 보입니다 → 앱을 `Applications` 위로 드래그하면 끝입니다. 끝나면 디스크 이미지는 추출(eject)하세요.
 
-**`.zip`으로 설치:** 더블클릭으로 압축을 풀거나(터미널에서는 `unzip "Seanwiki.Silicon-2.0.0-arm64-mac.zip"`) 앱이 나오면 `/Applications/`로 드래그합니다.
+**`.zip`으로 설치:** 더블클릭으로 압축을 풀거나(터미널에서는 `unzip "Seanwiki.Silicon-2.0.1-arm64-mac.zip"`) 앱이 나오면 `/Applications/`로 드래그합니다.
 
 어느 쪽이든 드래그하는 앱은 `Seanwiki Silicon.app`(Apple Silicon) 또는 `Seanwiki Intel.app`(Intel)입니다.
 

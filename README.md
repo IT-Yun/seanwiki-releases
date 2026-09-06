@@ -152,7 +152,7 @@ If you grab the wrong one it'll still run via Rosetta, but slower and with worse
 
 ### Step 2 — Grab the files
 
-Latest version: **v2.0.0**. From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest), download the files for your architecture into the same folder.
+Latest version: **v2.0.1**. From [Releases](https://github.com/IT-Yun/seanwiki-releases/releases/latest), download the files for your architecture into the same folder.
 
 Each architecture ships **two formats** — grab whichever you prefer (they're the same app):
 
@@ -161,8 +161,8 @@ Each architecture ships **two formats** — grab whichever you prefer (they're t
 
 | Architecture | `.dmg` (drag-install) | `.zip` (verify-first) | Signature |
 |---|---|---|---|
-| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.0-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.0-arm64-mac.zip` (~135 MB) | matching `…​.sig` (89 B) |
-| **Intel** | `Seanwiki.Intel-2.0.0.dmg` (~140 MB) | `Seanwiki.Intel-2.0.0-mac.zip` (~140 MB) | matching `…​.sig` (89 B) |
+| **Apple Silicon** (M1–M4) | `Seanwiki.Silicon-2.0.1-arm64.dmg` (~140 MB) | `Seanwiki.Silicon-2.0.1-arm64-mac.zip` (~135 MB) | matching `…​.sig` (89 B) |
+| **Intel** | `Seanwiki.Intel-2.0.1.dmg` (~140 MB) | `Seanwiki.Intel-2.0.1-mac.zip` (~140 MB) | matching `…​.sig` (89 B) |
 
 The signature file is tiny (89 bytes) — grab it together with the binary so verification works.
 
@@ -181,11 +181,11 @@ If you'd rather not click around, paste this. It auto-detects your chip, downloa
 # 1) pick the right file for your Mac's chip
 #    (hw.optional.arm64 == 1 means Apple Silicon — correct even inside a Rosetta shell)
 if [ "$(sysctl -in hw.optional.arm64 2>/dev/null)" = "1" ]; then
-  FILE="Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+  FILE="Seanwiki.Silicon-2.0.1-arm64-mac.zip"
 else
-  FILE="Seanwiki.Intel-2.0.0-mac.zip"
+  FILE="Seanwiki.Intel-2.0.1-mac.zip"
 fi
-BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.0"
+BASE="https://github.com/IT-Yun/seanwiki-releases/releases/download/v2.0.1"
 
 # 2) download the app + its signature into the current folder
 curl -L -o "$FILE"     "$BASE/$FILE"
@@ -194,7 +194,7 @@ curl -L -o "$FILE.sig" "$BASE/$FILE.sig"
 echo "Downloaded $FILE  ($(du -h "$FILE" | cut -f1))"
 ```
 
-(Have the GitHub CLI? `gh release download v2.0.0 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` grabs every asset — pick the arch you want, or pass `-p "*Silicon*"` / `-p "*Intel*"` to narrow it.)
+(Have the GitHub CLI? `gh release download v2.0.1 -R IT-Yun/seanwiki-releases -p "Seanwiki.*"` grabs every asset — pick the arch you want, or pass `-p "*Silicon*"` / `-p "*Intel*"` to narrow it.)
 
 Then verify it (Step 3), unzip, and drag the app into `/Applications/`.
 
@@ -205,15 +205,15 @@ This step takes ten seconds and protects you from a tampered binary. Clone this 
 ```bash
 cd <wherever-you-downloaded-the-file>
 # Apple Silicon:
-bash <path-to>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.0-arm64-mac.zip"
+bash <path-to>/scripts/verify-release.sh "Seanwiki.Silicon-2.0.1-arm64-mac.zip"
 # Intel:
-bash <path-to>/scripts/verify-release.sh "Seanwiki.Intel-2.0.0-mac.zip"
+bash <path-to>/scripts/verify-release.sh "Seanwiki.Intel-2.0.1-mac.zip"
 ```
 
 The script auto-finds the matching `.sig` (it must sit in the same folder). You should see:
 
 ```
-→ Verifying: Seanwiki.Silicon-2.0.0-arm64-mac.zip
+→ Verifying: Seanwiki.Silicon-2.0.1-arm64-mac.zip
 
   computed SHA-256: 8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb
 
@@ -225,16 +225,16 @@ The script auto-finds the matching `.sig` (it must sit in the same folder). You 
 
 **If the signature does NOT verify, delete the file and re-download.** Don't install it. Either the file is corrupted in transit, or someone tampered with it. Neither is your problem to fix — just grab a fresh copy.
 
-#### Published SHA-256 (v2.0.0)
+#### Published SHA-256 (v2.0.1)
 
 If you'd rather eyeball the hash yourself, run `shasum -a 256 <file>` and compare against this table:
 
 | File | SHA-256 |
 |---|---|
-| `Seanwiki.Silicon-2.0.0-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
-| `Seanwiki.Silicon-2.0.0-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
-| `Seanwiki.Intel-2.0.0-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
-| `Seanwiki.Intel-2.0.0.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
+| `Seanwiki.Silicon-2.0.1-arm64-mac.zip` | `8b3c0a613cc54bff0664d650f01b86edd4566a9e9af21113a70a9547f8507cdb` |
+| `Seanwiki.Silicon-2.0.1-arm64.dmg` | `bd67fec938dc1a833a1487ee305c72fa5999f63853c2e54b98470e8a21c271b1` |
+| `Seanwiki.Intel-2.0.1-mac.zip` | `a49ac024181627dc68eb90fd2c8379179ce7c243ab8667c1156dc72d2ba2ca55` |
+| `Seanwiki.Intel-2.0.1.dmg` | `79d2c63ea74789e7e6a5aaed8d2156ddb1311ba691d1a8818823b3d502b51396` |
 
 The public key (`scripts/seanwiki-pubkey.txt`) is:
 
@@ -248,7 +248,7 @@ This is the only key I sign with. If a future release verifies against a differe
 
 **From the `.dmg`:** double-click it → a window opens showing the app and an `Applications` shortcut → drag the app onto `Applications`. Done. Eject the disk image afterward.
 
-**From the `.zip`:** double-click it to extract (or `unzip "Seanwiki.Silicon-2.0.0-arm64-mac.zip"` in Terminal) → you get the app → drag it into `/Applications/`.
+**From the `.zip`:** double-click it to extract (or `unzip "Seanwiki.Silicon-2.0.1-arm64-mac.zip"` in Terminal) → you get the app → drag it into `/Applications/`.
 
 Either way the app you're dragging is `Seanwiki Silicon.app` (Apple Silicon) or `Seanwiki Intel.app` (Intel).
 
